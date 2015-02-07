@@ -1,1 +1,1 @@
-angular.module('capi', []);
+angular.module('capi', ['ngResource']);

@@ -2,10 +2,11 @@
 angular.module('capi').constant('capi.ums.urls', {
     auth: 'api/0.1/users/auth',
     logout: 'api/0.1/users/logout',
-    current_user: 'api/0.1/users/current_user'
+    current_user: 'api/0.1/users/current_user',
+    profiles: 'api/0.1/user_profile/:user_id'
 })
-.factory('capi.ums', ['$http', '$q', 'capi.ums.urls',
-    function($http, $q, urls) {
+.factory('capi.ums', ['$http', '$q', 'capi.ums.urls', '$resource',
+    function($http, $q, urls, $resource) {
         function UserManagementSystem() {
             this.current_user = null;
         }
@@ -62,6 +63,9 @@ angular.module('capi').constant('capi.ums.urls', {
             this.current_user = null;
             return $http.post(urls.logout);
         };
+
+        UserManagementSystem.prototype.profiles = $resource(urls.profiles);
+
         return new UserManagementSystem();
     }]
 );

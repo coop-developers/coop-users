@@ -1,1 +1,27 @@
-Profile goes here
+<div class="page-header">
+    <h1>User Profile</h1>
+</div>
+<h2>Basic Information</h2>
+<dl class="dl-horizontal">
+    <dt>Username:</dt>
+    <dd>{{ current_user.username }}</dd>
+    <dt>Full name:</dt>
+    <dd>{{ current_user.fullname }}</dd>
+</dl>
+<div ng-if="profile.$resolved">
+    <h2>Details</h2>
+    <dl class="dl-horizontal">
+        <dt>Email: </dt>
+        <dd>{{ profile.email }}</dd>
+        <dt>Suite: </dt>
+        <dd>{{ profile.suite_number }}</dd>
+        <dt>Lease period: </dt>
+        <dd>{{ profile.lease_until }}</dd>
+    </dl>
+</div>
+<div ng-if="!profile.$resolved" class="row">
+    <div class="col-md-5"></div>
+    <div class="col-md-1">
+        <img src="https://cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif" alt="">
+    </div>
+</div>

@@ -10,6 +10,7 @@ import bcrypt
 import json
 from collections import namedtuple
 import functools
+import time
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
@@ -20,16 +21,24 @@ def first(iter, default=None):
         return o
     return default
 
-class User(namedtuple('User', 'id username password_hash')):
+class User(namedtuple('User', 'id username fullname password_hash')):
 
     def serialize(self):
         data_dict = self._asdict()
         del data_dict['password_hash']
-        return json.dumps(data_dict)
+        return data_dict
+
+class UserProfile(namedtuple('UserProfile', 'id,email,suite_number,lease_until')):
+
+    def serialize(self):
+        return self._asdict()
 
 AuthDetails = namedtuple('AuthDetails', 'username password')
 user_db = [
-    User(0, 'maxzhao', '$2a$12$7jK6V6sbD6TqCZQcxWA0ae59Tfx02cvxPb33HKR9Sd6b58cg8RccC'),  #test
+    User(0, 'maxzhao', 'Max Zhao', '$2a$12$7jK6V6sbD6TqCZQcxWA0ae59Tfx02cvxPb33HKR9Sd6b58cg8RccC'),  #test
+]
+user_profile_db = [
+    UserProfile(0, 'test@email.com', 'S24', '2015 Winter'),
 ]
 
 def json_response(inner_fn):
@@ -40,17 +49,38 @@ def json_response(inner_fn):
         return resp
     return wrapped
 
+def authenticated(inner_fn):
+    @functools.wraps(inner_fn)
+    def wrapper(request):
+        user_id = request.session.get('user_id')
+        user_data = first(filter(lambda u: u.id==user_id, user_db))
+        if not user_data:
+            request.session['user_id'] = None
+            return Response('{"message": "Not logged in"}', status='403 Forbidden')
+        return inner_fn(request, user_data)
+    return wrapper
+
 
 @view_config(route_name='get_current_user', request_method='GET')
 @json_response
-def get_current_user(request):
-    user_id = request.session.get('user_id')
-    user_data = first(filter(lambda u: u.id==user_id, user_db))
-    if user_data:
-        return Response(user_data.serialize())
+@authenticated
+def get_current_user(request, user_data):
+    return Response(json.dumps(user_data.serialize()))
+
+@view_config(route_name='user_profile', request_method='GET')
+@json_response
+@authenticated
+def get_user_profile(request, user_data):
+    requested_user_id = int(request.matchdict['user_id'])
+    if requested_user_id != user_data.id:
+        return Response('{"message": "you do not have the permission to view other users\' profiles"}', status='403 Forbidden')
+
+    time.sleep(1.0)
+    profile = first(filter(lambda p: p.id==requested_user_id, user_profile_db))
+    if profile:
+        return Response(json.dumps(profile.serialize()))
     else:
-        request.session['user_id'] = None
-        return Response('{"message": "Not logged in"}', status='403 Forbidden')
+        return Response('{}')
 
 class AuthError(RuntimeError):
     pass
@@ -85,6 +115,8 @@ def run_server():
     config.add_route('get_current_user', '/coop_users/api/0.1/users/current_user')
     config.add_route('authenticate_and_login', '/coop_users/api/0.1/users/auth')
     config.add_route('logout', '/coop_users/api/0.1/users/logout')
+    config.add_route('user_profiles', '/coop_users/api/0.1/user_profile/')
+    config.add_route('user_profile', '/coop_users/api/0.1/user_profile/{user_id}')
     config.add_static_view('/coop_users', '.')
     config.scan()
 

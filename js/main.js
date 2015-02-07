@@ -53,7 +53,7 @@ user_management_system.controller('LoginCtrl', ['$scope', 'capi.ums', '$location
                 $location.path('/profile');
             })
             .catch(function(e) {
-                alert('authentication failed due to: ' + String(e.data.message || e.data));
+                alert('Authentication failed due to: ' + String(e.data.message || e.data));
             });
             return false;
         }
@@ -62,6 +62,8 @@ user_management_system.controller('LoginCtrl', ['$scope', 'capi.ums', '$location
 
 user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$location',
     function($scope, ums, $location) {
+        $scope.profile = ums.profiles.get({'user_id': ums.current_user.id});
+        $scope.current_user = ums.current_user;
     }]
 );
 
