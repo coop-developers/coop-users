@@ -89,7 +89,7 @@ def run_server():
     config.scan()
 
     app = config.make_wsgi_app()
-    local_binding = ('127.0.0.1', 8080)
+    local_binding = ('0.0.0.0', 8080)
     log.info('starting server at %s', local_binding)
     server = make_server(local_binding[0], local_binding[1], app)
     server.serve_forever()

@@ -24,7 +24,6 @@ user_management_system.config(['$routeProvider',
 user_management_system.run(['$rootScope', '$location', 'capi.ums',
     function($rootScope, $location, ums) {
         $rootScope.$on('$routeChangeStart', function(event, next) {
-            console.log(event);
             if (next.requiresLogin && !ums.is_logged_in()) {
                 console.log("DENIED");
                 event.preventDefault();
