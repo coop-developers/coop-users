@@ -8,7 +8,7 @@ user_management_system.config(['$routeProvider',
         $routeProvider.
         when('/login', {
             templateUrl: 'pages/login.html',
-            controller: 'LogicCtrl'
+            controller: 'LoginCtrl'
         })
         .when('/profile', {
             templateUrl: 'pages/profile.html',
@@ -20,7 +20,22 @@ user_management_system.config(['$routeProvider',
     }]
 );
 
-user_management_system.controller('LogicCtrl', ['$scope', 'capi.ums', '$location',
+user_management_system.run(['$rootScope', '$location', 'capi.ums',
+    function($rootScope, $location, ums) {
+        $rootScope.$on('$routeChangeStart', function(event, next) {
+            console.log(event);
+            if (next.controller != 'LoginCtrl' && !ums.is_logged_in()) {
+                console.log("DENIED");
+                event.preventDefault();
+                $rootScope.$evalAsync(function() {
+                    $location.path('/login');
+                });
+            }
+        });
+    }]
+);
+
+user_management_system.controller('LoginCtrl', ['$scope', 'capi.ums', '$location',
     function($scope, ums, $location) {
         ums.update_current_user().then(function() {
             // Only works if logged in, but whatever
