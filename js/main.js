@@ -4,11 +4,18 @@ var user_management_system = angular.module(
 );
 
 user_management_system.config(['$routeProvider',
-    function($routeProvider) {
+    function($routeProvider, ums) {
         $routeProvider.
         when('/login', {
             templateUrl: 'pages/login.html',
-            controller: 'LoginCtrl'
+            controller: 'LoginCtrl',
+            resolve: {
+                is_logged_in: ['capi.ums', function(ums) {
+                    return ums.update_current_user().then(function () {
+                        return ums.is_logged_in();
+                    });
+                }]
+            }
         })
         .when('/profile', {
             templateUrl: 'pages/profile.html',
@@ -35,14 +42,11 @@ user_management_system.run(['$rootScope', '$location', 'capi.ums',
     }]
 );
 
-user_management_system.controller('LoginCtrl', ['$scope', 'capi.ums', '$location',
-    function($scope, ums, $location) {
-        ums.update_current_user().then(function() {
-            // Only works if logged in, but whatever
-            if (ums.is_logged_in()) {
-                $location.path('/profile');
-            }
-        });
+user_management_system.controller('LoginCtrl', ['$scope', 'capi.ums', '$location', 'is_logged_in',
+    function($scope, ums, $location, is_logged_in) {
+        if (is_logged_in) {
+            $location.path('/profile');
+        }
         $scope.creds = {};
         $scope.login = function() {
             ums.login($scope.creds.username, $scope.creds.password).then(function(res) {
