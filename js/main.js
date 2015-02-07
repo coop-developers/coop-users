@@ -1,22 +1,61 @@
-var user_management_system = angular.module('user_management_system', [
-        'ngRoute']);
+var user_management_system = angular.module(
+    'user_management_system',
+    ['ngRoute', 'capi']
+);
 
 user_management_system.config(['$routeProvider',
-        function($routeProvider) {
-            $routeProvider.
-                when('/login', {
-                    templateUrl: 'pages/login.html',
-                    controller: 'LogicCtrl'
-                }).
-            otherwise({
-                redirectTo: '/login'
-            });
-        }]);
+    function($routeProvider) {
+        $routeProvider.
+        when('/login', {
+            templateUrl: 'pages/login.html',
+            controller: 'LogicCtrl'
+        })
+        .when('/profile', {
+            templateUrl: 'pages/profile.html',
+            controller: 'ProfileCtrl'
+        })
+        .otherwise({
+            redirectTo: '/login'
+        });
+    }]
+);
 
-user_management_system.controller('LogicCtrl',
-        function($scope) {
-            $scope.creds = {};
-            $scope.login = function() {
-                alert(JSON.stringify($scope.creds));
+user_management_system.controller('LogicCtrl', ['$scope', 'capi.ums', '$location',
+    function($scope, ums, $location) {
+        ums.update_current_user().then(function() {
+            // Only works if logged in, but whatever
+            if (ums.is_logged_in()) {
+                $location.path('/profile');
             }
         });
+        $scope.creds = {};
+        $scope.login = function() {
+            ums.login($scope.creds.username, $scope.creds.password).then(function(res) {
+                $location.path('/profile');
+            })
+            .catch(function(e) {
+                alert('authentication failed due to: ' + String(e.data.message || e.data));
+            });
+            return false;
+        }
+    }]
+);
+
+user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$location',
+    function($scope, ums, $location) {
+        if (!ums.is_logged_in()) {
+            $location.path('/login');
+        }
+    }]
+);
+
+user_management_system.controller('LoginStateCtrl', ['$scope', 'capi.ums', '$location',
+    function ($scope, ums, $location) {
+        $scope.ums = ums;
+        $scope.logout = function() {
+            ums.logout().then(function() {
+                $location.path('/login');
+            });
+        }
+    }]
+);
