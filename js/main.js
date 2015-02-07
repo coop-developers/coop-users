@@ -12,10 +12,11 @@ user_management_system.config(['$routeProvider',
         })
         .when('/profile', {
             templateUrl: 'pages/profile.html',
-            controller: 'ProfileCtrl'
+            controller: 'ProfileCtrl',
+            requiresLogin: true
         })
         .otherwise({
-            redirectTo: '/login'
+            redirectTo: '/profile'
         });
     }]
 );
@@ -24,7 +25,7 @@ user_management_system.run(['$rootScope', '$location', 'capi.ums',
     function($rootScope, $location, ums) {
         $rootScope.$on('$routeChangeStart', function(event, next) {
             console.log(event);
-            if (next.controller != 'LoginCtrl' && !ums.is_logged_in()) {
+            if (next.requiresLogin && !ums.is_logged_in()) {
                 console.log("DENIED");
                 event.preventDefault();
                 $rootScope.$evalAsync(function() {
@@ -58,9 +59,6 @@ user_management_system.controller('LoginCtrl', ['$scope', 'capi.ums', '$location
 
 user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$location',
     function($scope, ums, $location) {
-        if (!ums.is_logged_in()) {
-            $location.path('/login');
-        }
     }]
 );
 
