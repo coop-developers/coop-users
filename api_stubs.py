@@ -11,6 +11,8 @@ import json
 from collections import namedtuple
 import functools
 import time
+import binascii
+import os
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
@@ -41,6 +43,16 @@ user_profile_db = [
     UserProfile(0, 'test@email.com', 'S24', '2015 Winter'),
 ]
 
+def csrf_protected(inner_fn):
+    @functools.wraps(inner_fn)
+    def wrapper(request):
+        if not request.session.get('csrf_token') or \
+                request.headers.get('X-XSRF-TOKEN') != \
+                request.session.get('csrf_token'):
+            return Response('{"message": "invalid csrf token", "cause": "invalid_csrf"}', status='403 Forbidden')
+        return inner_fn(request)
+    return wrapper
+
 def json_response(inner_fn):
     @functools.wraps(inner_fn)
     def wrapped(request):
@@ -56,19 +68,21 @@ def authenticated(inner_fn):
         user_data = first(filter(lambda u: u.id==user_id, user_db))
         if not user_data:
             request.session['user_id'] = None
-            return Response('{"message": "Not logged in"}', status='403 Forbidden')
+            return Response('{"message": "Not logged in"}', status='401 Forbidden')
         return inner_fn(request, user_data)
     return wrapper
 
 
 @view_config(route_name='get_current_user', request_method='GET')
 @json_response
+@csrf_protected
 @authenticated
 def get_current_user(request, user_data):
     return Response(json.dumps(user_data.serialize()))
 
 @view_config(route_name='user_profile', request_method='GET')
 @json_response
+@csrf_protected
 @authenticated
 def get_user_profile(request, user_data):
     requested_user_id = int(request.matchdict['user_id'])
@@ -86,6 +100,8 @@ class AuthError(RuntimeError):
     pass
 
 @view_config(route_name='authenticate_and_login', request_method='POST')
+@json_response
+@csrf_protected
 def authenticate_and_login(request):
     auth_details = AuthDetails(**request.json_body)
     request.session['user_id'] = None
@@ -101,9 +117,23 @@ def authenticate_and_login(request):
         return Response(status='204 No Content (success)')
     except AuthError:
         return Response('{"message": "username or password incorrect"}',
-                status='403 Forbidden')
+                status='401 Forbidden')
+
+@view_config(route_name='regenerate_csrf_token', request_method='POST')
+@json_response
+def regenerate_csrf_token(request):
+    new_token = binascii.b2a_hex(os.urandom(20))
+    request.session['csrf_token'] = new_token
+    response = Response(json.dumps({'csrf_token': new_token}))
+    # Auto XSRF token insertion from https://docs.angularjs.org/api/ng/service/$http
+    response.set_cookie('XSRF-TOKEN', new_token)
+    return response
+
+
 
 @view_config(route_name='logout', request_method='POST')
+@json_response
+@csrf_protected
 def logout(request):
     request.session['user_id'] = None
     return Response(status='204 No Content (success)')
@@ -112,6 +142,7 @@ def logout(request):
 def run_server():
     config = Configurator()
     config.set_session_factory(session_factory)
+    config.add_route('regenerate_csrf_token', '/coop_users/api/0.1/update_csrf')
     config.add_route('get_current_user', '/coop_users/api/0.1/users/current_user')
     config.add_route('authenticate_and_login', '/coop_users/api/0.1/users/auth')
     config.add_route('logout', '/coop_users/api/0.1/users/logout')

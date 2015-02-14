@@ -41,7 +41,7 @@ angular.module('capi').constant('capi.ums.urls', {
                 return response.data;
             })
             .catch(function(error) {
-                if (error.status == 403) {
+                if (error.status == 401) {
                     return null; // A+ promises 2.2.7.1
                 }
                 throw error;
