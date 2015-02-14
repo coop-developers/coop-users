@@ -1,6 +1,9 @@
 <div class="page-header">
-    <div class="pull-right"><a href="#/change_password">Change my password</a></div>
-    <h1>User Profile</h1>
+    <h1><span ng-if="current_user.is_admin">User</span><span ng-if="!current_user.is_admin">Your</span> Profile</h1>
+</div>
+<div class="btn-group" role="group">
+    <a class="btn btn-default" href="#/edit_profile">Edit Profile</a>
+    <a class="btn btn-default" href="#/change_password">Change My Password</a>
 </div>
 <h2>Basic Information</h2>
 <dl class="dl-horizontal">

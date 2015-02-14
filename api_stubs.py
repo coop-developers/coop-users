@@ -113,12 +113,20 @@ def get_user_profile(request, user_data):
     if requested_user_id != user_data.id:
         return Response('{"message": "you do not have the permission to view other users\' profiles"}', status='403 Forbidden')
 
-    time.sleep(1.0)
     profile = first(filter(lambda p: p.id==requested_user_id, user_profile_db))
     if profile:
+        if request.method == 'POST':
+            new_data = dict(filter(lambda tp: tp[0] in (u'suite_number', u'lease_until'), request.json_body.iteritems()))
+            new_profile = profile._replace(**new_data)
+            user_profile_db.remove(profile)
+            user_profile_db.append(new_profile)
+
+            profile = new_profile
         return Response(json.dumps(profile.serialize()))
     else:
         return Response('{}')
+
+view_config(route_name='user_profile', request_method='POST')(get_user_profile)
 
 class AuthError(RuntimeError):
     pass

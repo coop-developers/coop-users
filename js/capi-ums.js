@@ -70,7 +70,7 @@ angular.module('capi').constant('capi.ums.urls', {
             return $http.post(urls.logout);
         };
 
-        UserManagementSystem.prototype.profiles = $resource(urls.profiles);
+        UserManagementSystem.prototype.profiles = $resource(urls.profiles, {user_id: '@id'});
 
         return new UserManagementSystem();
     }]

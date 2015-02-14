@@ -37,6 +37,11 @@ user_management_system.config(['$routeProvider',
             controller: 'ProfileCtrl',
             requiresLogin: true
         })
+        .when('/edit_profile', {
+            templateUrl: 'pages/edit-profile.html',
+            controller: 'ProfileCtrl',
+            requiresLogin: true
+        })
         .when('/change_password', {
             templateUrl: 'pages/change_password.html',
             controller: 'ChangePasswordCtrl',
@@ -88,10 +93,29 @@ user_management_system.controller('LoginCtrl', ['$scope', 'capi.ums', '$location
     }]
 );
 
-user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$location',
-    function($scope, ums, $location) {
+user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$location', 'http_error_alert', '$q',
+    function($scope, ums, $location, http_error_alert, $q) {
         $scope.profile = ums.profiles.get({'user_id': ums.scope.current_user.id});
         $scope.current_user = ums.scope.current_user;
+        $scope.busy = true;
+
+        $scope.profile.$promise.then(function() {
+            $scope.busy = false;
+        });
+
+        $scope.save_profile = function() {
+            $scope.busy = true;
+            $q.all([
+                http_error_alert($scope.current_user.$save(), 'Basic Information'),
+                http_error_alert($scope.profile.$save(), 'Details')
+            ]).catch(function() {})
+            .then(function() {
+                $location.path('/profile');
+            })
+            .finally(function() {
+                $scope.busy = false;
+            });
+        }
     }]
 );
 
