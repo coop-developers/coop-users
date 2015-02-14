@@ -12,7 +12,6 @@ user_management_system.factory('http_error_alert', ['$q',
                 error_prefix = '';
             }
             return promise.catch(function(http_result) {
-                console.error(http_result);
                 alert(error_prefix + String(http_result.data && (http_result.data.message || http_result.data) || http_result.status || 'Connection refused'));
                 return $q.reject(http_result);
             });
@@ -79,7 +78,9 @@ user_management_system.controller('LoginCtrl', ['$scope', 'capi.ums', '$location
             .then(function(res) {
                 $location.path('/profile');
             })
-            .catch(function() {})
+            .catch(function() {
+                $('#login-password').focus().select();
+            })
             .finally(function() {
                 $scope.busy = false;
             });

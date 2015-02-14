@@ -7,6 +7,7 @@ angular.module('capi').constant('capi.ums.urls', {
 })
 .factory('capi.ums', ['$http', '$q', 'capi.ums.urls', '$resource',
     function($http, $q, urls, $resource) {
+        var current_user_db = $resource(urls.current_user);
         function UserManagementSystem() {
             this.scope = {};
             this.scope.current_user = null;
@@ -37,9 +38,9 @@ angular.module('capi').constant('capi.ums.urls', {
         };
 
         UserManagementSystem.prototype.get_current_user = function() {
-            return $http.get(urls.current_user)
-            .then(function(response) {
-                return response.data;
+            var res = current_user_db.get();
+            return res.$promise.then(function(result) {
+                return res;
             })
             .catch(function(error) {
                 if (error.status == 401) {
@@ -51,8 +52,8 @@ angular.module('capi').constant('capi.ums.urls', {
 
         UserManagementSystem.prototype.update_current_user = function() {
             var instance = this;
-            return instance.get_current_user().then(function(user_info) {
-                instance.scope.current_user = user_info;
+            return instance.get_current_user().then(function(current_user) {
+                instance.scope.current_user = current_user;
             });
         }
 
@@ -61,7 +62,7 @@ angular.module('capi').constant('capi.ums.urls', {
         };
 
         UserManagementSystem.prototype.is_logged_in = function() {
-            return !!this.scope.current_user;
+            return !!(this.scope.current_user);
         };
 
         UserManagementSystem.prototype.logout = function() {
