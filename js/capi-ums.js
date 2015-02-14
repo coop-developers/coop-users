@@ -8,7 +8,8 @@ angular.module('capi').constant('capi.ums.urls', {
 .factory('capi.ums', ['$http', '$q', 'capi.ums.urls', '$resource',
     function($http, $q, urls, $resource) {
         function UserManagementSystem() {
-            this.current_user = null;
+            this.scope = {};
+            this.scope.current_user = null;
         }
 
         UserManagementSystem.prototype.authenticate = function(username, password) {
@@ -24,7 +25,7 @@ angular.module('capi').constant('capi.ums.urls', {
 
         UserManagementSystem.prototype.login = function(username, password) {
             var instance = this;
-            instance.current_user = null;
+            instance.scope.current_user = null;
             return instance.authenticate(username, password).then(function(result) {
                 if (result) {
                     return instance.update_current_user().then(function() {
@@ -51,16 +52,20 @@ angular.module('capi').constant('capi.ums.urls', {
         UserManagementSystem.prototype.update_current_user = function() {
             var instance = this;
             return instance.get_current_user().then(function(user_info) {
-                instance.current_user = user_info;
+                instance.scope.current_user = user_info;
             });
         }
 
+        UserManagementSystem.prototype.change_password = function(old_password, new_password) {
+            return $http.post(urls.current_user, {old_password: old_password, new_password: new_password});
+        };
+
         UserManagementSystem.prototype.is_logged_in = function() {
-            return !!this.current_user;
+            return !!this.scope.current_user;
         };
 
         UserManagementSystem.prototype.logout = function() {
-            this.current_user = null;
+            this.scope.current_user = null;
             return $http.post(urls.logout);
         };
 

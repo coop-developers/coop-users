@@ -30,7 +30,7 @@ class User(namedtuple('User', 'id username fullname password_hash')):
         del data_dict['password_hash']
         return data_dict
 
-class UserProfile(namedtuple('UserProfile', 'id,email,suite_number,lease_until')):
+class UserProfile(namedtuple('UserProfile', 'id,suite_number,lease_until')):
 
     def serialize(self):
         return self._asdict()
@@ -40,7 +40,7 @@ user_db = [
     User(0, 'maxzhao', 'Max Zhao', '$2a$12$7jK6V6sbD6TqCZQcxWA0ae59Tfx02cvxPb33HKR9Sd6b58cg8RccC'),  #test
 ]
 user_profile_db = [
-    UserProfile(0, 'test@email.com', 'S24', '2015 Winter'),
+    UserProfile(0, 'S24', '2015 Winter'),
 ]
 
 def csrf_protected(inner_fn):
@@ -68,17 +68,41 @@ def authenticated(inner_fn):
         user_data = first(filter(lambda u: u.id==user_id, user_db))
         if not user_data:
             request.session['user_id'] = None
-            return Response('{"message": "Not logged in"}', status='401 Forbidden')
+            return Response('{"message": "Not logged in"}', status='401 Unauthorized')
         return inner_fn(request, user_data)
     return wrapper
 
 
-@view_config(route_name='get_current_user', request_method='GET')
+@view_config(route_name='current_user', request_method='GET')
 @json_response
 @csrf_protected
 @authenticated
 def get_current_user(request, user_data):
     return Response(json.dumps(user_data.serialize()))
+
+@view_config(route_name='current_user', request_method='POST')
+@json_response
+@csrf_protected
+@authenticated
+def update_user_information(request, user_data):
+    request_dict = request.json_body
+    new_user_data = user_data
+    if 'new_password' in request_dict:
+        if not request_dict['new_password']:
+            return Response('{"message": "New password must not be empty"}', status='400 Invalid Input')
+        if bcrypt.hashpw(str(request_dict['old_password']), user_data.password_hash) != \
+                user_data.password_hash:
+            return Response('{"message": "Wrong password"}', status='401 Wrong Auth Details')
+
+        new_user_data = new_user_data._replace(password_hash=bcrypt.hashpw(str(request_dict['new_password']), bcrypt.gensalt()))
+
+    if 'fullname' in request_dict:
+        new_user_data = new_user_data._replace(fullname=request_dict['fullname'])
+
+    user_db.remove(user_data)
+    user_db.append(new_user_data)
+    return get_current_user(request)
+
 
 @view_config(route_name='user_profile', request_method='GET')
 @json_response
@@ -117,7 +141,7 @@ def authenticate_and_login(request):
         return Response(status='204 No Content (success)')
     except AuthError:
         return Response('{"message": "username or password incorrect"}',
-                status='401 Forbidden')
+                status='401 Wrong Auth Details')
 
 @view_config(route_name='regenerate_csrf_token', request_method='POST')
 @json_response
@@ -143,7 +167,7 @@ def run_server():
     config = Configurator()
     config.set_session_factory(session_factory)
     config.add_route('regenerate_csrf_token', '/coop_users/api/0.1/update_csrf')
-    config.add_route('get_current_user', '/coop_users/api/0.1/users/current_user')
+    config.add_route('current_user', '/coop_users/api/0.1/users/current_user')
     config.add_route('authenticate_and_login', '/coop_users/api/0.1/users/auth')
     config.add_route('logout', '/coop_users/api/0.1/users/logout')
     config.add_route('user_profiles', '/coop_users/api/0.1/user_profile/')
