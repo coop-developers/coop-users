@@ -1,9 +1,9 @@
 "use strict";
 angular.module('capi').constant('capi.ums.urls', {
-    auth: 'api/0.1/users/auth',
-    logout: 'api/0.1/users/logout',
-    current_user: 'api/0.1/users/current_user',
-    profiles: 'api/0.1/user_profile/:user_id'
+    auth: '~/users/auth!',
+    logout: '~/users/logout!',
+    current_user: '~/users/current_user!',
+    profiles: '~/user_profile!?user_id=:user_id'
 })
 .factory('capi.ums', ['$http', '$q', 'capi.ums.urls', '$resource',
     function($http, $q, urls, $resource) {

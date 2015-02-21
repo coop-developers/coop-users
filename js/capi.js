@@ -1,7 +1,24 @@
+"use strict";
 angular.module('capi', ['ngResource']);
-angular.module('capi').constant('capi.urls', {
-    update_csrf: 'api/0.1/update_csrf'
+angular.module('capi')
+.constant('capi.urls', {
+    base_uri: 'api/0.1/',
+    update_csrf: '~/update_csrf!',
+    base_suffix: ''
 });
+angular.module('capi').factory('capi_url_rewrite_interceptor',
+    ['$injector', '$q', 'capi.urls',
+        function ($injector, $q, urls) {
+            return {
+                request: function(config) {
+                    config.url = config.url.replace(/^~\//, urls.base_uri);
+                    config.url = config.url.replace(/\!/, urls.base_suffix);
+                    return config;
+                }
+            };
+        }
+    ]
+);
 angular.module('capi').factory('capi_csrf_reload_interceptor',
     ['$injector', '$q', 'capi.urls',
         function($injector, $q, urls) {
@@ -31,5 +48,6 @@ angular.module('capi').factory('capi_csrf_reload_interceptor',
 )
 .config(function($httpProvider) {
     $httpProvider.interceptors.push('capi_csrf_reload_interceptor');
+    $httpProvider.interceptors.push('capi_url_rewrite_interceptor');
 });
 

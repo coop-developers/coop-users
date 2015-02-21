@@ -109,7 +109,7 @@ def update_user_information(request, user_data):
 @csrf_protected
 @authenticated
 def get_user_profile(request, user_data):
-    requested_user_id = int(request.matchdict['user_id'])
+    requested_user_id = int(request.GET['user_id'])
     if requested_user_id != user_data.id:
         return Response('{"message": "you do not have the permission to view other users\' profiles"}', status='403 Forbidden')
 
@@ -178,8 +178,7 @@ def run_server():
     config.add_route('current_user', '/coop_users/api/0.1/users/current_user')
     config.add_route('authenticate_and_login', '/coop_users/api/0.1/users/auth')
     config.add_route('logout', '/coop_users/api/0.1/users/logout')
-    config.add_route('user_profiles', '/coop_users/api/0.1/user_profile/')
-    config.add_route('user_profile', '/coop_users/api/0.1/user_profile/{user_id}')
+    config.add_route('user_profile', '/coop_users/api/0.1/user_profile')
     config.add_static_view('/coop_users', '.')
     config.scan()
 

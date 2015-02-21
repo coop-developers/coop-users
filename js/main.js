@@ -96,7 +96,7 @@ user_management_system.controller('LoginCtrl', ['$scope', 'capi.ums', '$location
 user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$location', 'http_error_alert', '$q',
     function($scope, ums, $location, http_error_alert, $q) {
         $scope.profile = ums.profiles.get({'user_id': ums.scope.current_user.id});
-        $scope.current_user = ums.scope.current_user;
+        $scope.current_user = angular.copy(ums.scope.current_user);
         $scope.busy = true;
 
         $scope.profile.$promise.then(function() {
@@ -106,7 +106,9 @@ user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$locati
         $scope.save_profile = function() {
             $scope.busy = true;
             $q.all([
-                http_error_alert($scope.current_user.$save(), 'Basic Information'),
+                http_error_alert($scope.current_user.$save().then(function() {
+                    ums.scope.current_user = $scope.current_user;
+                }), 'Basic Information'),
                 http_error_alert($scope.profile.$save(), 'Details')
             ]).catch(function() {})
             .then(function() {
