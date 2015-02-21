@@ -19,7 +19,7 @@ log = logging.getLogger('withenv')
 logging.getLogger().setLevel(logging.INFO)
 
 config = {
-    'virtualenv_binary': 'virtualenv-{sys.version_info.major}.{sys.version_info.minor}',
+    'virtualenv_binary': ['virtualenv-{sys.version_info.major}.{sys.version_info.minor}', 'virtualenv2', 'virtualenv'],
     'requirements_file': 'requirements.txt',
     'virtualenv_run_directory': '.virtualenv_run_{sys.platform}',
     'bin_dir': 'bin',
@@ -42,6 +42,8 @@ def update_platform_config():
     for key, value in config.iteritems():
         if isinstance(value, basestring):
             config[key] = value.format(**globals())
+        else:
+            config[key] = [value.format(**globals()) for value in config[key]]
 
 class Inenv(object):
 
@@ -55,6 +57,20 @@ class Inenv(object):
 
         self.requirements_file = config.get('requirements_file')
 
+    def create_virtualenv(self, binary):
+        try:
+            arguments = [binary]
+            if not self.args.use_site_packages:
+                arguments.append('--no-site-packages')
+            else:
+                arguments.append('--system-site-packages')
+            arguments.append(self.virtualenv_dir)
+            subprocess.check_call(arguments)
+        except Exception:
+            log.info('Destroying (potentially broken) virtualenv directory')
+            shutil.rmtree(self.virtualenv_dir)
+            raise
+
     def setup_virtualenv(self):
         """Discover existing virtualenv and create one if non present"""
         create_virtualenv = False
@@ -66,18 +82,20 @@ class Inenv(object):
 
         if create_virtualenv:
             log.info("Creating new virtualenv")
-            try:
-                arguments = [config.get('virtualenv_binary')]
-                if not self.args.use_site_packages:
-                    arguments.append('--no-site-packages')
+            succeed = False
+            if isinstance(config.get('virtualenv_binary'), basestring):
+                config['virtualenv_binary'] = [config['virtualenv_binary']]
+            for binary in config['virtualenv_binary']:
+                try:
+                    self.create_virtualenv(binary)
+                except OSError:
+                    continue
                 else:
-                    arguments.append('--system-site-packages')
-                arguments.append(self.virtualenv_dir)
-                subprocess.check_call(arguments)
-            except Exception:
-                log.info('Destroying (potentially broken) virtualenv directory')
-                shutil.rmtree(self.virtualenv_dir)
-                raise
+                    succeed = True
+                    break
+
+            if not succeed:
+                raise RuntimeError('failed to locate virtualenv binary')
     
     def get_virtualenv_path(self, path):
         return os.path.join(self.virtualenv_dir, path)
