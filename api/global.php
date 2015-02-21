@@ -1,6 +1,7 @@
 <?php
 
-define("BASE_PATH", realpath(__DIR__));
+session_start();
+define("ROOT_PATH", realpath(__DIR__));
 
 $config = array();
 call_user_func(function() use (&$config) {
@@ -31,7 +32,16 @@ function send_json_response($json_body=null) {
     }
 }
 
-function get_json_body($body_text=null) {
+function validate_csrf() {
+    if (!isset($_SESSION['csrf_token']) || $_SESSION['csrf_token'] !== $_SERVER['HTTP_X_XSRF_TOKEN']) {
+        header('HTTP/1.1 403 Invalid CSRF');
+        send_json_response(array('message'=>'Invalid CSRF Token', 'cause'=>'invalid_csrf'));
+        exit(2);
+    }
+}
+
+function get_json_body($body_text=null, $validate_csrf=true) {
+    if ($validate_csrf) validate_csrf();
     if (is_null($body_text) && strpos(strtolower($_SERVER['CONTENT_TYPE']), 'json') === false) {
         header('HTTP/1.1 400 Invalid Request Content Type');
         send_json_response(array('message'=>'Invalid request content type'));
