@@ -4,7 +4,7 @@ angular.module('capi')
 .constant('capi.urls', {
     base_uri: 'api/0.1/',
     update_csrf: '~/update_csrf!',
-    base_suffix: ''
+    base_suffix: '.php'
 });
 angular.module('capi').factory('capi_url_rewrite_interceptor',
     ['$injector', '$q', 'capi.urls',
@@ -27,7 +27,6 @@ angular.module('capi').factory('capi_csrf_reload_interceptor',
                     var $http = $injector.get('$http');
                     if (error.config.do_not_retry) return $q.reject(error);
                     if (error.status === 403 && error.data && error.data.cause === 'invalid_csrf') {
-                        console.log(error);
                         return $http.post(urls.update_csrf).then(function () {
                             // retry original request after updating csrf token
                             error.config.do_not_retry = true;

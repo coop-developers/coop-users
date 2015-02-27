@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL); 
+ini_set( 'display_errors','1');
 
 session_start();
 define("ROOT_PATH", realpath(__DIR__));
@@ -33,7 +35,7 @@ function send_json_response($json_body=null) {
 }
 
 function validate_csrf() {
-    if (!isset($_SESSION['csrf_token']) || $_SESSION['csrf_token'] !== $_SERVER['HTTP_X_XSRF_TOKEN']) {
+    if (!isset($_SESSION['csrf_token']) || !isset($_SERVER['HTTP_X_XSRF_TOKEN']) || $_SESSION['csrf_token'] !== $_SERVER['HTTP_X_XSRF_TOKEN']) {
         header('HTTP/1.1 403 Invalid CSRF');
         send_json_response(array('message'=>'Invalid CSRF Token', 'cause'=>'invalid_csrf'));
         exit(2);
@@ -53,6 +55,82 @@ function get_json_body($body_text=null, $validate_csrf=true) {
     return json_decode($body_text, true);
 }
 
+function user_load($user_id) {
+    $query = get_db_session()->prepare('SELECT * FROM users LEFT JOIN user_profiles ON
+        users.id = user_profiles.user_id WHERE users.id = ?');
+    $query->execute(array($user_id));
+    $user_info = $query->fetch(PDO::FETCH_ASSOC);
+    unset($user_info['user_id']);
+    unset($user_info['password_hash']);
+    return $user_info;
+}
+
+function user_check_authenticated() {
+    if (!isset($_SESSION['user_id'])) {
+        header('HTTP/1.1 401 Authentication Needed');
+        exit(0);
+    }
+}
+
+function user_load_current() {
+    if (!isset($_SESSION['user_id'])) {
+        return NULL;
+    }
+    return user_load($_SESSION['user_id']);
+}
+
+function user_check_password($email, $password) {
+    $query = get_db_session()->prepare('SELECT id, password_hash FROM users WHERE email = ?');
+    $query->execute(array($email));
+    $user_record = $query->fetch();
+    if (!$user_record) {
+        return FALSE;
+    }
+    if (!password_verify($password, $user_record['password_hash'])) {
+        return FALSE;
+    }
+    return $user_record['id'];
+}
+
+function table_update_keys($table, $primary_key, $primary_key_value, $valid_keys, $new_data, $allow_insert=FALSE) {
+    $keys = array();
+    $placeholders = array();
+    $values = array();
+    foreach ($new_data as $key=>$value) {
+        if (in_array($key, $valid_keys)) {
+            $keys[] = "`$key`";
+            $placeholders[] = '?';
+            $values[] = $value;
+        }
+    }
+
+    if (count($keys) == 0) return null;
+
+    $update_settings = array();
+    foreach ($keys as $key) {
+        $update_settings[] = "$key = ?";
+    }
+
+    $key_list = implode(', ', $keys);
+    $placeholder_list = implode(', ', $placeholders);
+    $update_list = implode(', ', $update_settings);
+    $values[] = $primary_key_value;
+    if (!$allow_insert) {
+        $query = "UPDATE `$table` SET $update_list WHERE $primary_key = ?";
+    } else {
+        $dup_update_settings = array();
+        foreach ($keys as $key) {
+            $dup_update_settings[] = "$key = VALUES($key)";
+        }
+        $dup_update_list = implode(', ', $dup_update_settings);
+        $query = "INSERT INTO `$table` ($key_list, $primary_key) VALUES ($placeholder_list, ?) ON DUPLICATE KEY UPDATE $dup_update_list";
+    }
+
+
+    $query = get_db_session()->prepare($query);
+    $query->execute($values);
+    return $query;
+}
 
 # Ensure this file does not get served
 if (basename($_SERVER['SCRIPT_NAME']) == 'global.php') {

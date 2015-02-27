@@ -3,7 +3,6 @@ angular.module('capi').constant('capi.ums.urls', {
     auth: '~/users/auth!',
     logout: '~/users/logout!',
     current_user: '~/users/current_user!',
-    profiles: '~/user_profile!?user_id=:user_id'
 })
 .factory('capi.ums', ['$http', '$q', 'capi.ums.urls', '$resource',
     function($http, $q, urls, $resource) {
@@ -69,8 +68,6 @@ angular.module('capi').constant('capi.ums.urls', {
             this.scope.current_user = null;
             return $http.post(urls.logout);
         };
-
-        UserManagementSystem.prototype.profiles = $resource(urls.profiles, {user_id: '@id'});
 
         return new UserManagementSystem();
     }]

@@ -47,7 +47,7 @@
           </ul>
           <ul class="nav navbar-nav navbar-right" ng-controller="LoginStateCtrl" ng-cloak>
               <li class="navbar-text" ng-if="ums.current_user">
-                Welcome, <span ng-bind="ums.current_user.fullname"></span>
+                Welcome, <span ng-bind="ums.current_user.full_name"></span>
               </li>
               <li ng-if="ums.current_user"><a href="javascript:void(0)" ng-click="logout()">Logout</a></li>
               <li ng-if="!ums.current_user"><a href="#/login">Login</a></li>
