@@ -57,10 +57,11 @@ user_management_system.run(['$rootScope', '$location', 'capi.ums',
     function($rootScope, $location, ums) {
         $rootScope.$on('$routeChangeStart', function(event, next) {
             if (next.requiresLogin && !ums.is_logged_in()) {
+                console.log(next);
                 console.log("DENIED");
                 event.preventDefault();
                 $rootScope.$evalAsync(function() {
-                    $location.path('/login');
+                    $location.path('/login').search('from', next.$$route.originalPath);
                 });
             }
         });
@@ -69,8 +70,17 @@ user_management_system.run(['$rootScope', '$location', 'capi.ums',
 
 user_management_system.controller('LoginCtrl', ['$scope', 'capi.ums', '$location', 'is_logged_in', 'http_error_alert',
     function($scope, ums, $location, is_logged_in, http_error_alert) {
+        function to_next_page() {
+            if ($location.search().redirect_to) {
+                location.href = $location.search().redirect_to;
+            } else if ($location.search().from) {
+                $location.path($location.search().from).search('from', null);
+            } else {
+                $location.path('/profile');
+            }
+        }
         if (is_logged_in) {
-            $location.path('/profile');
+            to_next_page();
         }
         $scope.creds = {username: '', password: ''};
         $scope.busy = false;
@@ -81,7 +91,7 @@ user_management_system.controller('LoginCtrl', ['$scope', 'capi.ums', '$location
                 'Authentication failed'
             )
             .then(function(res) {
-                $location.path('/profile');
+                to_next_page();
             })
             .catch(function() {
                 $('#login-password').focus().select();
