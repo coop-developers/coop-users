@@ -13,7 +13,7 @@ angular.module('capi').constant('capi.ums.urls', {
 
         UserManagementSystem.prototype.current_user_model = $resource(urls.current_user);
         UserManagementSystem.prototype.create_new_user = function() {
-            return this.current_user_model.save();
+            return this.current_user_model.get();
         }
         UserManagementSystem.prototype.save_new_user = function(user) {
             user.new = true;
