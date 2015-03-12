@@ -18,7 +18,8 @@ angular.module('capi').constant('capi.ums.urls', {
         UserManagementSystem.prototype.save_new_user = function(user) {
             user.new = true;
             console.log(user);
-            return $http.post(urls.current_user, user);
+            user.save();
+            // return $http.post(urls.current_user, user);
         }
         UserManagementSystem.prototype.authenticate = function(username, password) {
             return $http.post(urls.auth, {username: username, password: password})
