@@ -1,13 +1,15 @@
 <div class="page-header">
-    <div class="pull-right"><a href="#/change_password">Change my password</a></div>
     <h1>Edit Profile</h1>
 </div>
 <form action="">
     <h2>Basic Information</h2>
     <div class="form-group">
         <label>Email:</label>
-        <div>
+        <div ng-if="!new">
             {{ current_user.email }}
+        </div>
+        <div ng-if="new">
+            <input id="" class="form-control" type="text" name="" ng-model="current_user.email">
         </div>
     </div>
     <div class="form-group">

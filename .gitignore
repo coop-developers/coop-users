@@ -2,3 +2,5 @@
 *.py[co]
 .*.swp
 .virtualenv*
+/watch.py
+/watch.yaml

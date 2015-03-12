@@ -42,6 +42,11 @@ user_management_system.config(['$routeProvider',
             controller: 'ProfileCtrl',
             requiresLogin: true
         })
+        .when('/register', {
+            templateUrl: 'pages/edit-profile.html',
+            controller: 'RegisterCtrl',
+            requiresLogin: false
+        })
         .when('/change_password', {
             templateUrl: 'pages/change_password.html',
             controller: 'ChangePasswordCtrl',
@@ -116,6 +121,30 @@ user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$locati
                 http_error_alert($scope.current_user.$save().then(function() {
                     ums.scope.current_user = $scope.current_user;
                 }), 'Basic Information')
+            ]).catch(function() {})
+            .then(function() {
+                $location.path('/profile');
+            })
+            .finally(function() {
+                $scope.busy = false;
+            });
+        }
+    }]
+);
+
+user_management_system.controller('RegisterCtrl', ['$scope', 'capi.ums', '$location', 'http_error_alert', '$q',
+    function($scope, ums, $location, http_error_alert, $q) {
+        $scope.current_user = ums.create_new_user();
+        $scope.current_user.new = true;
+        $scope.busy = true;
+        $scope.busy = false;
+        $scope.new = true;
+
+
+        $scope.save_profile = function() {
+            $scope.busy = true;
+            $q.all([
+                http_error_alert(ums.save_new_user($scope.current_user), 'Basic Information')
             ]).catch(function() {})
             .then(function() {
                 $location.path('/profile');

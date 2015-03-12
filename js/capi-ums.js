@@ -6,12 +6,19 @@ angular.module('capi').constant('capi.ums.urls', {
 })
 .factory('capi.ums', ['$http', '$q', 'capi.ums.urls', '$resource',
     function($http, $q, urls, $resource) {
-        var current_user_db = $resource(urls.current_user);
         function UserManagementSystem() {
             this.scope = {};
             this.scope.current_user = null;
         }
 
+        UserManagementSystem.prototype.current_user_model = $resource(urls.current_user);
+        UserManagementSystem.prototype.create_new_user = function() {
+            return $resource(urls.current_user, {});
+        }
+        UserManagementSystem.prototype.save_new_user = function(user) {
+            user.new = true;
+            return $http.post(urls.current_user, user);
+        }
         UserManagementSystem.prototype.authenticate = function(username, password) {
             return $http.post(urls.auth, {username: username, password: password})
             .then(function(response) {
@@ -37,7 +44,7 @@ angular.module('capi').constant('capi.ums.urls', {
         };
 
         UserManagementSystem.prototype.get_current_user = function() {
-            var res = current_user_db.get();
+            var res = this.current_user_model.get();
             return res.$promise.then(function(result) {
                 return res;
             })
