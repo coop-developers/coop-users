@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $query->execute(array($request['email'], $new_password_hash));
         $row = $query->fetch();
         $id = $row['id'];
+        echo($id);
         $_SESSION['user_id'] = $id;
     }
 }
