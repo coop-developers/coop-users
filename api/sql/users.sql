@@ -5,6 +5,7 @@ CREATE TABLE `users` (
   `email` varchar(255) COLLATE utf8_bin NOT NULL,
   `full_name` varchar(255) COLLATE utf8_bin NOT NULL,
   `password_hash` varchar(255) COLLATE utf8_bin NOT NULL,
+  `permissions`  varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

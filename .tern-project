@@ -1,0 +1,13 @@
+{
+  "libs": [
+    "browser",
+    "jquery",
+    "angular"
+  ],
+  "plugins": {
+    "requirejs": {
+      "baseURL": "./",
+      "paths": {}
+    }
+  }
+}
