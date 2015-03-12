@@ -60,6 +60,7 @@ function user_load($user_id) {
         users.id = user_profiles.user_id WHERE users.id = ?');
     $query->execute(array($user_id));
     $user_info = $query->fetch(PDO::FETCH_ASSOC);
+    $user_info['permissions'] = json_decode($user_info['permissions'], true);
     unset($user_info['user_id']);
     unset($user_info['password_hash']);
     return $user_info;
