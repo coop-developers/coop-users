@@ -1,14 +1,16 @@
 <?php
 require_once(dirname(dirname(__DIR__)).'/global.php');
 
-$request = get_json_body();
-if (isset($request['new']) && $request['new']) {
-    $query = get_db_session().prepare("INSERT INTO users (email, password_hash, full_name, permissions) VALUES (?, ?, '', ''); SELECT LAST_INSERT_ID() AS id;");
-    $new_password_hash = password_hash($request['password'], PASSWORD_BCRYPT);
-    $query->execute(array($request['email'], $new_password_hash));
-    $row = $query->fetch();
-    $id = $row['id'];
-    $_SESSION['user_id'] = $id;
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $request = get_json_body();
+    if (isset($request['new']) && $request['new']) {
+        $query = get_db_session().prepare("INSERT INTO users (email, password_hash, full_name, permissions) VALUES (?, ?, '', ''); SELECT LAST_INSERT_ID() AS id;");
+        $new_password_hash = password_hash($request['password'], PASSWORD_BCRYPT);
+        $query->execute(array($request['email'], $new_password_hash));
+        $row = $query->fetch();
+        $id = $row['id'];
+        $_SESSION['user_id'] = $id;
+    }
 }
 
 user_check_authenticated();
