@@ -66,21 +66,15 @@ user_management_system.config(['$routeProvider',
 user_management_system.run(['$rootScope', '$location', 'capi.ums',
     function($rootScope, $location, ums) {
         $rootScope.$on('$routeChangeStart', function(event, next) {
-            console.warn($location.path());
+            var target_url = $location.path();
             if (next.requiresLogin && !ums.is_logged_in()) {
                 console.log(next);
                 console.log("DENIED");
                 event.preventDefault();
                 $rootScope.$evalAsync(function() {
-                    $location.path('/login').search('from', $location.path());
+                    $location.path('/login').search('from', target_url));
                 });
             }
-        });
-        $rootScope.$on('$locationChangeStart', function(event, newUrl, oldUrl) {
-            console.log($location.path());
-            console.log(event);
-            console.log(newUrl);
-            console.log(oldUrl);
         });
     }]
 );
