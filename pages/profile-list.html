@@ -6,6 +6,7 @@
     <table class="table">
         <thead>
             <tr>
+                <th></th>
                 <th>#</th>
                 <th>Email</th>
                 <th>Name</th>
@@ -14,6 +15,9 @@
         </thead>
         <tbody>
             <tr ng-repeat="user in users">
+                <th>
+                    <a class="glyphicon glyphicon-pencil">a</a>
+                </th>
                 <th>{{ user.id }}</th>
                 <td>{{ user.email }}</td>
                 <td>{{ user.full_name }}</td>
