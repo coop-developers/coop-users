@@ -58,7 +58,7 @@ user_management_system.config(['$routeProvider',
             requiresLogin: true
         })
         .otherwise({
-            redirectTo: '/profile'
+            redirectTo: '/profile/'
         });
     }]
 );
