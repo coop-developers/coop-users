@@ -32,12 +32,12 @@ user_management_system.config(['$routeProvider',
                 }]
             }
         })
-        .when('/profile', {
+        .when('/profile/:id', {
             templateUrl: 'pages/profile.html',
             controller: 'ProfileCtrl',
             requiresLogin: true
         })
-        .when('/edit_profile', {
+        .when('/edit_profile/:id', {
             templateUrl: 'pages/edit-profile.html',
             controller: 'ProfileCtrl',
             requiresLogin: true
@@ -47,7 +47,7 @@ user_management_system.config(['$routeProvider',
             controller: 'RegisterCtrl',
             requiresLogin: false
         })
-        .when('/change_password', {
+        .when('/change_password/:id', {
             templateUrl: 'pages/change_password.html',
             controller: 'ChangePasswordCtrl',
             requiresLogin: true
@@ -113,9 +113,14 @@ user_management_system.controller('LoginCtrl', ['$scope', 'capi.ums', '$location
     }]
 );
 
-user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$location', 'http_error_alert', '$q',
-    function($scope, ums, $location, http_error_alert, $q) {
-        $scope.current_user = angular.copy(ums.scope.current_user);
+user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$location', 'http_error_alert', '$q', '$routeParams',
+    function($scope, ums, $location, http_error_alert, $q, $routeParams) {
+        var is_current_user = !$routeParams.id;
+        if (is_current_user) {
+            $scope.current_user = angular.copy(ums.scope.current_user);
+        } else {
+            $scope.current_user = ums.user_model.get($routeParams.id);
+        }
         $scope.busy = true;
         $scope.busy = false;
 
@@ -124,7 +129,9 @@ user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$locati
             $scope.busy = true;
             $q.all([
                 http_error_alert($scope.current_user.$save().then(function() {
-                    ums.scope.current_user = $scope.current_user;
+                    if (is_current_user) {
+                        ums.scope.current_user = $scope.current_user;
+                    }
                 }), 'Basic Information')
             ]).catch(function() {})
             .then(function() {
@@ -203,5 +210,8 @@ user_management_system.controller('ChangePasswordCtrl', ['$scope', 'capi.ums', '
 user_management_system.controller('ListProfileCtrl', ['$scope', 'capi.ums', '$location', 'http_error_alert',
     function($scope, ums, $location, http_error_alert) {
         $scope.users = ums.user_model.query();
+        $scope.edit = function(user) {
+            $location.path('/profile/' + String(user.id));
+        }
     }]
 );
