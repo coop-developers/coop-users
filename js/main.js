@@ -119,7 +119,7 @@ user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$locati
         if (is_current_user) {
             $scope.current_user = angular.copy(ums.scope.current_user);
         } else {
-            $scope.current_user = ums.user_model.get($routeParams.id);
+            $scope.current_user = ums.user_model.get({id: $routeParams.id});
         }
         $scope.busy = true;
         $scope.busy = false;
