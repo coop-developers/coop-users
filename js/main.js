@@ -65,7 +65,7 @@ user_management_system.config(['$routeProvider',
 
 user_management_system.run(['$rootScope', '$location', 'capi.ums',
     function($rootScope, $location, ums) {
-        $rootScope.$on('$routeChangeStart', function(event, next) {
+        $rootScope.$on('$locationChangeStart', function(event, next) {
             if (next.requiresLogin && !ums.is_logged_in()) {
                 console.log(next);
                 console.log($location.path());
