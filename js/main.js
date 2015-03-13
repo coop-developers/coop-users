@@ -58,7 +58,7 @@ user_management_system.config(['$routeProvider',
             requiresLogin: true
         })
         .otherwise({
-            redirectTo: '/profile/'
+            redirectTo: '/profile'
         });
     }]
 );
@@ -71,7 +71,7 @@ user_management_system.run(['$rootScope', '$location', 'capi.ums',
                 console.log("DENIED");
                 event.preventDefault();
                 $rootScope.$evalAsync(function() {
-                    $location.path('/login').search('from', next.$$route.originalPath);
+                    $location.path('/login').search('from', $location.path());
                 });
             }
         });
