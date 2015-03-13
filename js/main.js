@@ -75,6 +75,11 @@ user_management_system.run(['$rootScope', '$location', 'capi.ums',
                 });
             }
         });
+        $rootScope.$on('$locationChangeStart', function(event, newUrl, oldUrl) {
+            console.log(event);
+            console.log(newUrl);
+            console.log(oldUrl);
+        });
     }]
 );
 
