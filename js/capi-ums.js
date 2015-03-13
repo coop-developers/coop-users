@@ -12,11 +12,11 @@ angular.module('capi').constant('capi.ums.urls', {
         }
 
         UserManagementSystem.prototype.user_model = $resource(
-            urls.current_user + '?user_id=:id',
+            urls.current_user + 'id=:id',
             {'id': '@id'},
             {
-                get_current: { method: 'GET', url: urls.current_user + '?user_id=current' },
-                query: { method: 'GET', url: urls.current_user }
+                get_current: { method: 'GET', url: urls.current_user + '?id=current' },
+                query: { method: 'GET', url: urls.current_user, isArray: true }
             }
         );
         UserManagementSystem.prototype.create_new_user = function() {
