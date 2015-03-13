@@ -47,7 +47,7 @@ user_management_system.config(['$routeProvider',
             controller: 'RegisterCtrl',
             requiresLogin: false
         })
-        .when('/change_password/:id?', {
+        .when('/change_password', {
             templateUrl: 'pages/change_password.html',
             controller: 'ChangePasswordCtrl',
             requiresLogin: true
@@ -116,8 +116,8 @@ user_management_system.controller('LoginCtrl', ['$scope', 'capi.ums', '$location
 
 user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$location', 'http_error_alert', '$q', '$routeParams',
     function($scope, ums, $location, http_error_alert, $q, $routeParams) {
-        var is_current_user = !$routeParams.id;
-        if (is_current_user) {
+        $scope.current_user = ums.scope.current_user;
+        if (!$routeParams.id) {
             $scope.user = angular.copy(ums.scope.current_user);
         } else {
             $scope.user = ums.user_model.get({id: $routeParams.id});
@@ -130,13 +130,13 @@ user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$locati
             $scope.busy = true;
             $q.all([
                 http_error_alert($scope.user.$save().then(function() {
-                    if (is_current_user) {
+                    if (ums.scope.current_user.id == $scope.user.id) {
                         ums.scope.current_user = $scope.user;
                     }
                 }), 'Basic Information')
             ]).catch(function() {})
             .then(function() {
-                $location.path('/profile');
+                $location.path('/profile/' + $scope.user.id);
             })
             .finally(function() {
                 $scope.busy = false;
@@ -179,8 +179,8 @@ user_management_system.controller('LoginStateCtrl', ['$scope', 'capi.ums', '$loc
         }
     }]
 );
-user_management_system.controller('ChangePasswordCtrl', ['$scope', 'capi.ums', '$location', 'http_error_alert',
-    function ($scope, ums, $location, http_error_alert) {
+user_management_system.controller('ChangePasswordCtrl', ['$scope', 'capi.ums', '$location', 'http_error_alert', '$routeParams',
+    function ($scope, ums, $location, http_error_alert, $routeParams) {
         $scope.change_password_params = {old_password: '', new_password: ''};
         $scope.new_password2 = '';
         $scope.busy = false;
@@ -191,7 +191,7 @@ user_management_system.controller('ChangePasswordCtrl', ['$scope', 'capi.ums', '
             }
             $scope.busy = true;
             http_error_alert(
-                ums.change_password(
+                ums.change_current_password(
                     $scope.change_password_params.old_password,
                     $scope.change_password_params.new_password
                 ),
