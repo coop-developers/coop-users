@@ -117,9 +117,9 @@ user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$locati
     function($scope, ums, $location, http_error_alert, $q, $routeParams) {
         var is_current_user = !$routeParams.id;
         if (is_current_user) {
-            $scope.current_user = angular.copy(ums.scope.current_user);
+            $scope.user = angular.copy(ums.scope.current_user);
         } else {
-            $scope.current_user = ums.user_model.get({id: $routeParams.id});
+            $scope.user = ums.user_model.get({id: $routeParams.id});
         }
         $scope.busy = true;
         $scope.busy = false;
@@ -128,9 +128,9 @@ user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$locati
         $scope.save_profile = function() {
             $scope.busy = true;
             $q.all([
-                http_error_alert($scope.current_user.$save().then(function() {
+                http_error_alert($scope.user.$save().then(function() {
                     if (is_current_user) {
-                        ums.scope.current_user = $scope.current_user;
+                        ums.scope.current_user = $scope.user;
                     }
                 }), 'Basic Information')
             ]).catch(function() {})
@@ -146,8 +146,8 @@ user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$locati
 
 user_management_system.controller('RegisterCtrl', ['$scope', 'capi.ums', '$location', 'http_error_alert', '$q',
     function($scope, ums, $location, http_error_alert, $q) {
-        $scope.current_user = ums.create_new_user();
-        $scope.current_user.new = true;
+        $scope.user = ums.create_new_user();
+        $scope.user.new = true;
         $scope.busy = true;
         $scope.busy = false;
         $scope.new = true;
@@ -156,7 +156,7 @@ user_management_system.controller('RegisterCtrl', ['$scope', 'capi.ums', '$locat
         $scope.save_profile = function() {
             $scope.busy = true;
             $q.all([
-                http_error_alert(ums.save_new_user($scope.current_user), 'Basic Information')
+                http_error_alert(ums.save_new_user($scope.user), 'Basic Information')
             ]).catch(function() {})
             .then(function() {
                 $location.path('/profile');

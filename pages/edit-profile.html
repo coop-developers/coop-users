@@ -6,28 +6,28 @@
     <div class="form-group">
         <label>Email:</label>
         <div ng-if="!new">
-            {{ current_user.email }}
+            {{ user.email }}
         </div>
         <div ng-if="new">
-            <input id="" class="form-control" type="text" name="" ng-model="current_user.email">
+            <input id="" class="form-control" type="text" name="" ng-model="user.email">
         </div>
     </div>
     <div class="form-group" ng-if="new">
         <label for="">Password:</label>
-        <input id="" class="form-control" type="password" name="" ng-model="current_user.password">
+        <input id="" class="form-control" type="password" name="" ng-model="user.password">
     </div>
     <div class="form-group">
         <label>Full name:</label>
-        <input class="form-control" type="text" ng-model="current_user.full_name">
+        <input class="form-control" type="text" ng-model="user.full_name">
     </div>
     <h2>Details</h2>
     <div class="form-group">
         <label>Suite: </label>
-        <input class="form-control" type="text" ng-model="current_user.suite">
+        <input class="form-control" type="text" ng-model="user.suite">
     </div>
     <div class="form-group">
         <label>Lease period: </label>
-        <input class="form-control" type="text" ng-model="current_user.lease_period">
+        <input class="form-control" type="text" ng-model="user.lease_period">
     </div>
     <button type="submit" ng-click="$event.preventDefault();save_profile()" class="btn btn-default" ng-disabled="busy">Update Profile</button>
 </form>

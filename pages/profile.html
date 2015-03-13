@@ -1,25 +1,25 @@
 <div class="page-header">
-    <h1><span ng-if="current_user.is_admin">User</span><span ng-if="!current_user.is_admin">Your</span> Profile</h1>
+    <h1><span ng-if="user.is_admin">User</span><span ng-if="!user.is_admin">Your</span> Profile</h1>
 </div>
 <div class="btn-group" role="group">
     <a class="btn btn-default" href="#/edit_profile">Edit Profile</a>
     <a class="btn btn-default" href="#/change_password">Change My Password</a>
-    <a class="btn btn-default" ng-if="current_user.permissions.user_admin" href="#/profiles">Manage Users</a>
+    <a class="btn btn-default" ng-if="user.permissions.user_admin" href="#/profiles">Manage Users</a>
 </div>
 <h2>Basic Information</h2>
 <dl class="dl-horizontal">
     <dt>Email: </dt>
-    <dd>{{ current_user.email }}</dd>
+    <dd>{{ user.email }}</dd>
     <dt>Full name:</dt>
-    <dd>{{ current_user.full_name }}</dd>
+    <dd>{{ user.full_name }}</dd>
 </dl>
 <h2>Details</h2>
 <dl class="dl-horizontal">
     <dt>Suite: </dt>
-    <dd>{{ current_user.suite }}</dd>
+    <dd>{{ user.suite }}</dd>
     <dt>Lease period: </dt>
-    <dd>{{ current_user.lease_period }}</dd>
+    <dd>{{ user.lease_period }}</dd>
 </dl>
-{{ current_user.permissions }}
+{{ user.permissions }}
 <div class="row right">
 </div>
