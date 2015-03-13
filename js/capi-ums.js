@@ -2,7 +2,7 @@
 angular.module('capi').constant('capi.ums.urls', {
     auth: '~/users/auth!',
     logout: '~/users/logout!',
-    current_user: '~/users/user!',
+    current_user: '~/users/user!?id=:id',
 })
 .factory('capi.ums', ['$http', '$q', 'capi.ums.urls', '$resource',
     function($http, $q, urls, $resource) {
@@ -11,9 +11,9 @@ angular.module('capi').constant('capi.ums.urls', {
             this.scope.current_user = null;
         }
 
-        UserManagementSystem.prototype.current_user_model = $resource(urls.current_user);
+        UserManagementSystem.prototype.user_model = $resource(urls.current_user, {'id': '@id'});
         UserManagementSystem.prototype.create_new_user = function() {
-            return new this.current_user_model();
+            return new this.user_model();
         }
         UserManagementSystem.prototype.save_new_user = function(user) {
             user.new = true;
@@ -43,8 +43,8 @@ angular.module('capi').constant('capi.ums.urls', {
             });
         };
 
-        UserManagementSystem.prototype.get_current_user = function() {
-            var res = this.current_user_model.get();
+        UserManagementSystem.prototype._get_current_user = function() {
+            var res = this.user_model.get();
             return res.$promise.then(function(result) {
                 return res;
             })
@@ -58,7 +58,7 @@ angular.module('capi').constant('capi.ums.urls', {
 
         UserManagementSystem.prototype.update_current_user = function() {
             var instance = this;
-            return instance.get_current_user().then(function(current_user) {
+            return instance._get_current_user().then(function(current_user) {
                 instance.scope.current_user = current_user;
             });
         }
