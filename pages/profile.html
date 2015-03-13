@@ -2,7 +2,7 @@
     <h1><span ng-if="user.id!=current_user.id">User</span><span ng-if="user.id == current_user.id">Your</span> Profile</h1>
 </div>
 <div class="btn-group" role="group">
-    <a class="btn btn-default" ng-href="#/edit_profile/{user.id}">Edit Profile</a>
+    <a class="btn btn-default" ng-href="#/edit_profile/{{user.id}}">Edit Profile</a>
     <a class="btn btn-default" href="#/change_password" ng-if="user.id == current_user.id">Change My Password</a>
     <a class="btn btn-default" ng-if="current_user.permissions.user_admin" href="#/profiles">Manage Users</a>
 </div>
