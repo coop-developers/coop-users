@@ -2,7 +2,7 @@
 angular.module('capi').constant('capi.ums.urls', {
     auth: '~/users/auth!',
     logout: '~/users/logout!',
-    current_user: '~/users/current_user!',
+    current_user: '~/users/user!',
 })
 .factory('capi.ums', ['$http', '$q', 'capi.ums.urls', '$resource',
     function($http, $q, urls, $resource) {

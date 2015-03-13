@@ -2,7 +2,7 @@
 angular.module('capi', ['ngResource']);
 angular.module('capi')
 .constant('capi.urls', {
-    base_uri: 'api/0.1/',
+    base_uri: '../api/0.1/',
     update_csrf: '~/update_csrf!',
     base_suffix: '.php'
 });
