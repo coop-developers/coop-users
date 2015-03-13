@@ -72,7 +72,7 @@ user_management_system.run(['$rootScope', '$location', 'capi.ums',
                 console.log("DENIED");
                 event.preventDefault();
                 $rootScope.$evalAsync(function() {
-                    $location.path('/login').search('from', target_url));
+                    $location.path('/login').search('from', target_url);
                 });
             }
         });
