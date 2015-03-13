@@ -4,8 +4,8 @@ angular.module('capi').constant('capi.ums.urls', {
     logout: '~/users/logout!',
     current_user: '~/users/user!?id=:id',
 })
-.factory('capi.ums', ['$http', '$q', 'capi.ums.urls', '$resource',
-    function($http, $q, urls, $resource) {
+.factory('capi.ums', ['$http', '$q', 'capi.ums.urls', '$resource', 'capi.urls',
+    function($http, $q, urls, $resource, curls) {
         function UserManagementSystem() {
             this.scope = {};
             this.scope.current_user = null;
@@ -56,10 +56,27 @@ angular.module('capi').constant('capi.ums.urls', {
             });
         };
 
+        UserManagementSystem.prototype.get_current_user = function() {
+            if (this.is_logged_in()) {
+                var deferred = $q.defer();
+                deferred.resolve(instance.scope.current_user);
+                return deferred.promise;
+            }
+            return this.update_current_user().then(function(user) {
+                if (!user) {
+                    location.href = curls.login_url + '?redirect_to=' + escape(location.pathname);
+                    // Not actually logged, redirect to the login service
+                    throw {status: 401, data: {mesasge: 'Not authenticated'}};
+                }
+                return user;
+            });
+        }
+
         UserManagementSystem.prototype.update_current_user = function() {
             var instance = this;
             return instance._get_current_user().then(function(current_user) {
                 instance.scope.current_user = current_user;
+                return current_user;
             });
         }
 

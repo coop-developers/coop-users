@@ -4,7 +4,8 @@ angular.module('capi')
 .constant('capi.urls', {
     base_uri: '../api/0.1/',
     update_csrf: '~/update_csrf!',
-    base_suffix: '.php'
+    base_suffix: '.php',
+    login_url: '../coop-users/#/login'
 });
 angular.module('capi').factory('capi_url_rewrite_interceptor',
     ['$injector', '$q', 'capi.urls',
