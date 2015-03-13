@@ -2,7 +2,7 @@
 angular.module('capi').constant('capi.ums.urls', {
     auth: '~/users/auth!',
     logout: '~/users/logout!',
-    current_user: '~/users/user!?id=:id',
+    current_user: '~/users/user!',
 })
 .factory('capi.ums', ['$http', '$q', 'capi.ums.urls', '$resource', 'capi.urls',
     function($http, $q, urls, $resource, curls) {
@@ -11,7 +11,14 @@ angular.module('capi').constant('capi.ums.urls', {
             this.scope.current_user = null;
         }
 
-        UserManagementSystem.prototype.user_model = $resource(urls.current_user, {'id': '@id'});
+        UserManagementSystem.prototype.user_model = $resource(
+            urls.current_user + '?user_id=:id',
+            {'id': '@id'},
+            {
+                get_current: { method: 'GET', url: urls.current_user + '?user_id=current' },
+                query: { method: 'GET', url: urls.current_user }
+            }
+        );
         UserManagementSystem.prototype.create_new_user = function() {
             return new this.user_model();
         }
@@ -44,7 +51,7 @@ angular.module('capi').constant('capi.ums.urls', {
         };
 
         UserManagementSystem.prototype._get_current_user = function() {
-            var res = this.user_model.get();
+            var res = this.user_model.get_current();
             return res.$promise.then(function(result) {
                 return res;
             })
