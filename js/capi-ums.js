@@ -64,7 +64,7 @@ angular.module('capi').constant('capi.ums.urls', {
             }
             return this.update_current_user().then(function(user) {
                 if (!user) {
-                    location.href = curls.login_url + '?redirect_to=' + escape(location.pathname);
+                    location.href = curls.login_url + '?redirect_to=' + escape(location.pathname + (location.query || '') + (location.hash || ''));
                     // Not actually logged, redirect to the login service
                     throw {status: 401, data: {mesasge: 'Not authenticated'}};
                 }
