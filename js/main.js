@@ -32,12 +32,12 @@ user_management_system.config(['$routeProvider',
                 }]
             }
         })
-        .when('/profile/:id', {
+        .when('/profile/:id?', {
             templateUrl: 'pages/profile.html',
             controller: 'ProfileCtrl',
             requiresLogin: true
         })
-        .when('/edit_profile/:id', {
+        .when('/edit_profile/:id?', {
             templateUrl: 'pages/edit-profile.html',
             controller: 'ProfileCtrl',
             requiresLogin: true
@@ -47,7 +47,7 @@ user_management_system.config(['$routeProvider',
             controller: 'RegisterCtrl',
             requiresLogin: false
         })
-        .when('/change_password/:id', {
+        .when('/change_password/:id?', {
             templateUrl: 'pages/change_password.html',
             controller: 'ChangePasswordCtrl',
             requiresLogin: true
