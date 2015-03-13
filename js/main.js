@@ -202,5 +202,6 @@ user_management_system.controller('ChangePasswordCtrl', ['$scope', 'capi.ums', '
 
 user_management_system.controller('ListProfileCtrl', ['$scope', 'capi.ums', '$location', 'http_error_alert',
     function($scope, ums, $location, http_error_alert) {
+        $scope.users = ums.user_model.query();
     }]
 );
