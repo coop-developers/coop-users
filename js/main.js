@@ -68,6 +68,7 @@ user_management_system.run(['$rootScope', '$location', 'capi.ums',
         $rootScope.$on('$routeChangeStart', function(event, next) {
             if (next.requiresLogin && !ums.is_logged_in()) {
                 console.log(next);
+                console.log($location.path());
                 console.log("DENIED");
                 event.preventDefault();
                 $rootScope.$evalAsync(function() {
