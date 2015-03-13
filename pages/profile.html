@@ -4,7 +4,7 @@
 <div class="btn-group" role="group">
     <a class="btn btn-default" ng-href="#/edit_profile/{user.id}">Edit Profile</a>
     <a class="btn btn-default" href="#/change_password" ng-if="user.id == current_user.id">Change My Password</a>
-    <a class="btn btn-default" ng-if="user.permissions.user_admin" href="#/profiles">Manage Users</a>
+    <a class="btn btn-default" ng-if="current_user.permissions.user_admin" href="#/profiles">Manage Users</a>
 </div>
 <h2>Basic Information</h2>
 <dl class="dl-horizontal">
