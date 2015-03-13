@@ -3,5 +3,22 @@
 </div>
 
 <div class="user-list">
-    <div ng-repeat="user in users">{{ user }}</div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Room</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="user in users">
+                <th>{{ user.id }}</th>
+                <td>{{ user.email }}</td>
+                <td>{{ user.full_name }}</td>
+                <td>{{ user.suite }}</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
