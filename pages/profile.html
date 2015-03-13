@@ -4,6 +4,7 @@
 <div class="btn-group" role="group">
     <a class="btn btn-default" href="#/edit_profile">Edit Profile</a>
     <a class="btn btn-default" href="#/change_password">Change My Password</a>
+    <a class="btn btn-default" ng-if="current_user.permissions.user_admin" href="#/profiles">Manage Users</a>
 </div>
 <h2>Basic Information</h2>
 <dl class="dl-horizontal">

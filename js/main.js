@@ -52,6 +52,11 @@ user_management_system.config(['$routeProvider',
             controller: 'ChangePasswordCtrl',
             requiresLogin: true
         })
+        .when('/profiles', {
+            templateUrl: 'pages/profile-list.html',
+            controller: 'ListProfileCtrl',
+            requiresLogin: true
+        })
         .otherwise({
             redirectTo: '/profile'
         });
@@ -192,5 +197,10 @@ user_management_system.controller('ChangePasswordCtrl', ['$scope', 'capi.ums', '
                 $scope.busy = false;
             });
         };
+    }]
+);
+
+user_management_system.controller('ListProfileCtrl', ['$scope', 'capi.ums', '$location', 'http_error_alert',
+    function($scope, ums, $location, http_error_alert) {
     }]
 );
