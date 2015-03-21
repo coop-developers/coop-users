@@ -33,7 +33,15 @@
     <div ng-if="current_user.permissions.user_admin && editing_permissions">
         <h2>Permissions</h2>
         <div class="form-group">
-            <label><input type="checkbox" ng-model="user.permissions.user_admin"> User Administrator</label>
+            <div>
+                <label><input type="checkbox" ng-model="user.permissions.user_admin"> User Administrator</label>
+            </div>
+            <div>
+                <label><input type="checkbox" ng-model="user.permissions.rfa_manager"> RFA Manager</label>
+            </div>
+            <div>
+                <label><input type="checkbox" ng-model="user.permissions.rfa_moderator"> RFA Moderator</label>
+            </div>
         </div>
     </div>
     <button type="submit" ng-click="$event.preventDefault();save_profile()" class="btn btn-default" ng-disabled="busy">Update Profile</button>
