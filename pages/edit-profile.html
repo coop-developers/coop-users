@@ -29,7 +29,7 @@
         <label>Lease period: </label>
         <input class="form-control" type="text" ng-model="user.lease_period">
     </div>
-    <button class="btn btn-default" type="button" ng-click="edit_permissions=true">Edit Permission</button>
+    <button class="btn btn-default" type="button" ng-click="edit_permissions=true" ng-if="current_user.permissions.user_admin && !edit_permissions">Edit Permission</button>
     <div ng-if="current_user.permissions.user_admin && edit_permissions">
         <h2>Permissions</h2>
         <div class="form-group">
