@@ -122,6 +122,9 @@ user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$locati
         } else {
             $scope.user = ums.user_model.get({id: $routeParams.id});
         }
+        if (!$scope.user.permissions) {
+            $scope.user.permissions = {};
+        }
         $scope.busy = true;
         $scope.busy = false;
 

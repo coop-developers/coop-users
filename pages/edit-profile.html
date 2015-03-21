@@ -29,5 +29,9 @@
         <label>Lease period: </label>
         <input class="form-control" type="text" ng-model="user.lease_period">
     </div>
+    <h2 ng-if="current_user.permissions.user_admin">Permissions</h2>
+    <div class="form-group" ng-if="current_user.permissions.user_admin">
+        <label><input type="checkbox" ng-model=current_user.permissions.user_admin> User Administrator</label>
+    </div>
     <button type="submit" ng-click="$event.preventDefault();save_profile()" class="btn btn-default" ng-disabled="busy">Update Profile</button>
 </form>
