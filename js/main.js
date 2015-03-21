@@ -211,8 +211,11 @@ user_management_system.controller('ChangePasswordCtrl', ['$scope', 'capi.ums', '
 user_management_system.controller('ListProfileCtrl', ['$scope', 'capi.ums', '$location', 'http_error_alert',
     function($scope, ums, $location, http_error_alert) {
         $scope.users = ums.user_model.query();
-        $scope.edit = function(user) {
+        $scope.view = function(user) {
             $location.path('/profile/' + String(user.id));
+        }
+        $scope.edit = function(user) {
+            $location.path('/edit_profile/' + String(user.id));
         }
     }]
 );

@@ -16,6 +16,8 @@
         <tbody>
             <tr ng-repeat="user in users">
                 <th>
+                    <a class="glyphicon glyphicon-user" href="javascript:void(0)"
+                        ng-click="view(user)"></a>
                     <a class="glyphicon glyphicon-pencil" href="javascript:void(0)"
                         ng-click="edit(user)"></a>
                 </th>
