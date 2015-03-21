@@ -125,9 +125,13 @@ user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$locati
         if (!$scope.user.permissions) {
             $scope.user.permissions = {};
         }
-        $scope.edit_permissions = false;
+        $scope.editing_permissions = false;
         $scope.busy = true;
         $scope.busy = false;
+
+        $scope.edit_permissions = function() {
+            $scope.editing_permissions = true;
+        }
 
 
         $scope.save_profile = function() {
