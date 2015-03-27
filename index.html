@@ -39,11 +39,12 @@
           </button>
           <a class="navbar-brand" href="#">Coop User Management</a>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
+        <div id="navbar" class="collapse navbar-collapse" ng-controller="LoginStateCtrl" ng-cloak>
           <ul class="nav navbar-nav">
             <li class="active"><a href="#/profile">Profile</a></li>
+            <li ng-if="ums.current_user"><a href="../coop-rfa">RFA System</a></li>
           </ul>
-          <ul class="nav navbar-nav navbar-right" ng-controller="LoginStateCtrl" ng-cloak>
+          <ul class="nav navbar-nav navbar-right">
               <li class="navbar-text" ng-if="ums.current_user">
                 Welcome, <span ng-bind="ums.current_user.full_name"></span>
               </li>
