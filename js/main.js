@@ -58,6 +58,7 @@ user_management_system.config(['$routeProvider',
             requiresLogin: true
         })
         .when('/logout', {
+            templateUrl: 'pages/logout.html',
             controller: 'LogoutCtrl',
         })
         .otherwise({
