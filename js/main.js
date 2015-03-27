@@ -157,12 +157,12 @@ user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$locati
     }]
 );
 
-user_management_system.controller('LogoutCtrl', ['$scope', 'capi.ums', '$location'],
+user_management_system.controller('LogoutCtrl', ['$scope', 'capi.ums', '$location',
     function ($scope, ums, $location) {
         ums.logout().then(function() {
             $location.path('/login');
         });
-    }
+    }]
 );
 
 user_management_system.controller('RegisterCtrl', ['$scope', 'capi.ums', '$location', 'http_error_alert', '$q',
