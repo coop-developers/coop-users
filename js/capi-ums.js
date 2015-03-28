@@ -15,6 +15,8 @@ angular.module('capi').constant('capi.ums.urls', {
             urls.current_user + '?id=:id',
             {'id': '@id'},
             {
+                save: { method: 'PUT' },
+                create: { method: 'POST' },
                 get_current: { method: 'GET', url: urls.current_user + '?id=current' },
                 query: { method: 'GET', url: urls.current_user, isArray: true }
             }
@@ -23,8 +25,7 @@ angular.module('capi').constant('capi.ums.urls', {
             return new this.user_model();
         }
         UserManagementSystem.prototype.save_new_user = function(user) {
-            user.new = true;
-            return user.$save();
+            return user.$create();
         }
         UserManagementSystem.prototype.authenticate = function(username, password) {
             return $http.post(urls.auth, {username: username, password: password})

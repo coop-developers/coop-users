@@ -168,7 +168,6 @@ user_management_system.controller('LogoutCtrl', ['$scope', 'capi.ums', '$locatio
 user_management_system.controller('RegisterCtrl', ['$scope', 'capi.ums', '$location', 'http_error_alert', '$q',
     function($scope, ums, $location, http_error_alert, $q) {
         $scope.user = ums.create_new_user();
-        $scope.user.new = true;
         $scope.busy = true;
         $scope.busy = false;
         $scope.new = true;
