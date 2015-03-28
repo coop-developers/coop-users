@@ -89,7 +89,7 @@ angular.module('capi').constant('capi.ums.urls', {
         }
 
         UserManagementSystem.prototype.change_current_password = function(old_password, new_password) {
-            return $http.post(urls.current_user + '?id=current', {old_password: old_password, new_password: new_password});
+            return $http.put(urls.current_user + '?id=current', {old_password: old_password, new_password: new_password});
         };
 
         UserManagementSystem.prototype.is_logged_in = function() {
