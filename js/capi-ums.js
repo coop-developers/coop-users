@@ -65,6 +65,7 @@ angular.module('capi').constant('capi.ums.urls', {
         };
 
         UserManagementSystem.prototype.get_current_user = function() {
+            var instance = this;
             if (this.is_logged_in()) {
                 var deferred = $q.defer();
                 deferred.resolve(instance.scope.current_user);
