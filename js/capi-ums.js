@@ -93,6 +93,10 @@ angular.module('capi').constant('capi.ums.urls', {
             return $http.put(urls.current_user + '?id=current', {old_password: old_password, new_password: new_password});
         };
 
+        UserManagementSystem.prototype.delete_user = function(id, confirm_email) {
+            return $http.delete(urls.current_user + '?id=' + String(id), {headers: {'X-CONFIRM-EMAIL': confirm_email}});
+        };
+
         UserManagementSystem.prototype.is_logged_in = function() {
             return !!(this.scope.current_user);
         };

@@ -1,48 +1,70 @@
 <div class="page-header">
     <h1>Edit Profile</h1>
 </div>
-<form action="">
-    <h2>Basic Information</h2>
-    <div class="form-group">
-        <label>Email:</label>
-        <div ng-if="!new">
-            {{ user.email }}
-        </div>
-        <div ng-if="new">
-            <input id="" class="form-control" type="text" name="" ng-model="user.email">
-        </div>
-    </div>
-    <div class="form-group" ng-if="new">
-        <label for="">Password:</label>
-        <input id="" class="form-control" type="password" name="" ng-model="user.password">
-    </div>
-    <div class="form-group">
-        <label>Full name:</label>
-        <input class="form-control" type="text" ng-model="user.full_name">
-    </div>
-    <h2>Details</h2>
-    <div class="form-group">
-        <label>Suite: </label>
-        <input class="form-control" type="text" ng-model="user.suite">
-    </div>
-    <div class="form-group">
-        <label>Lease period: </label>
-        <input class="form-control" type="text" ng-model="user.lease_period">
-    </div>
-    <button class="btn btn-default" type="button" ng-click="edit_permissions()" ng-if="current_user.permissions.user_admin && !editing_permissions">Edit Permission</button>
-    <div ng-if="current_user.permissions.user_admin && editing_permissions">
-        <h2>Permissions</h2>
+
+<div class="row col-md-12">
+    <form action="">
+        <h2>Basic Information</h2>
         <div class="form-group">
-            <div>
-                <label><input type="checkbox" ng-model="user.permissions.user_admin"> User Administrator</label>
+            <label>Email:</label>
+            <div ng-if="!new">
+                {{ user.email }}
             </div>
-            <div>
-                <label><input type="checkbox" ng-model="user.permissions.rfa_manager"> RFA Manager</label>
+            <div ng-if="new">
+                <input id="" class="form-control" type="text" name="" ng-model="user.email">
             </div>
-            <div>
-                <label><input type="checkbox" ng-model="user.permissions.rfa_moderator"> RFA Moderator</label>
+        </div>
+        <div class="form-group" ng-if="new">
+            <label for="">Password:</label>
+            <input id="" class="form-control" type="password" name="" ng-model="user.password">
+        </div>
+        <div class="form-group">
+            <label>Full name:</label>
+            <input class="form-control" type="text" ng-model="user.full_name">
+        </div>
+        <h2>Details</h2>
+        <div class="form-group">
+            <label>Suite: </label>
+            <input class="form-control" type="text" ng-model="user.suite">
+        </div>
+        <div class="form-group">
+            <label>Lease period: </label>
+            <input class="form-control" type="text" ng-model="user.lease_period">
+        </div>
+        <button class="btn btn-default" type="button" ng-click="edit_permissions()" ng-if="current_user.permissions.user_admin && !editing_permissions">Edit Permission</button>
+        <div ng-if="current_user.permissions.user_admin && editing_permissions">
+            <h2>Permissions</h2>
+            <div class="form-group">
+                <div>
+                    <label><input type="checkbox" ng-model="user.permissions.user_admin"> User Administrator</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" ng-model="user.permissions.rfa_manager"> RFA Manager</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" ng-model="user.permissions.rfa_moderator"> RFA Moderator</label>
+                </div>
+            </div>
+        </div>
+        <button type="submit" ng-click="$event.preventDefault();save_profile()" class="btn btn-default" ng-disabled="busy">Update Profile</button>
+    </form>
+</div>
+
+<div class="row col-md-12" ng-if="current_user.permissions.user_admin" style="margin-top: 1em">
+    <button class="btn btn-warning" ng-click="edit_advanced_options()" ng-if="!editing_advanced_options">Advanced Options</button>
+    <div ng-if="editing_advanced_options" class="panel panel-warning">
+        <div class="panel-heading">
+            <h3 class="panel-title">Advanced Options</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4" ng-if="confirming_user_deletion">
+                    <input type="text" class="form-control" ng-model="user_deletion_data.confirm_email" placeholder="Confirm user email then click &quot;Delete User&quot;">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-danger" ng-click="delete_user()">Delete User</button>
+                </div>
             </div>
         </div>
     </div>
-    <button type="submit" ng-click="$event.preventDefault();save_profile()" class="btn btn-default" ng-disabled="busy">Update Profile</button>
-</form>
+</div>

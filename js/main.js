@@ -132,9 +132,30 @@ user_management_system.controller('ProfileCtrl', ['$scope', 'capi.ums', '$locati
         $scope.editing_permissions = false;
         $scope.busy = true;
         $scope.busy = false;
+        $scope.editing_advanced_options = false;
 
         $scope.edit_permissions = function() {
             $scope.editing_permissions = true;
+        }
+
+        $scope.edit_advanced_options = function() {
+            $scope.editing_advanced_options = true;
+        }
+
+        $scope.delete_user = function() {
+            if (!$scope.confirming_user_deletion) {
+                $scope.confirming_user_deletion = true;
+                $scope.user_deletion_data = {
+                    confirm_email: ''
+                };
+            } else {
+                $scope.busy = true;
+                http_error_alert(ums.delete_user($scope.user.id, $scope.user_deletion_data.confirm_email))
+                .then(function() {
+                    $location.path('/profiles');
+                })
+                .catch(function() {});
+            }
         }
 
 
