@@ -259,3 +259,21 @@ user_management_system.controller('ListProfileCtrl', ['$scope', 'capi.ums', '$lo
         }
     }]
 );
+
+user_management_system.filter('perms_disp', function() {
+    var perms_disp_table = {
+        user_admin: ['User Administrator', 'UA'],
+        rfa_manager: ['RFA Manager', 'RA'],
+        rfa_moderator: ['RFA Moderator', 'RM']
+    };
+    var type_lookup = {
+        full: 0,
+        abbr: 1,
+        0: 0,
+        1: 1
+    };
+    return function(input, type) {
+        if (!type) type = 'full';
+        return perms_disp_table[input][type_lookup[type]];
+    };
+});

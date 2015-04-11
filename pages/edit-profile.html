@@ -35,14 +35,8 @@
         <div ng-if="current_user.permissions.user_admin && editing_permissions">
             <h2>Permissions</h2>
             <div class="form-group">
-                <div>
-                    <label><input type="checkbox" ng-model="user.permissions.user_admin"> User Administrator</label>
-                </div>
-                <div>
-                    <label><input type="checkbox" ng-model="user.permissions.rfa_manager"> RFA Manager</label>
-                </div>
-                <div>
-                    <label><input type="checkbox" ng-model="user.permissions.rfa_moderator"> RFA Moderator</label>
+                <div ng-repeat="perm_name in ['user_admin', 'rfa_manager', 'rfa_moderator']">
+                    <label><input type="checkbox" ng-model="user.permissions[perm_name]"> {{ perm_name | perms_disp:'full' }}</label>
                 </div>
             </div>
         </div>

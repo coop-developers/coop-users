@@ -27,9 +27,9 @@
                 <td>{{ user.full_name }}</td>
                 <td>{{ user.suite }}</td>
                 <td>
-                    <span class="label label-default" ng-if="user.permissions.user_admin" title="User Administrator">UA</span>
-                    <span class="label label-default" ng-if="user.permissions.rfa_manager" title="RFA Manager">RMa</span>
-                    <span class="label label-default" ng-if="user.permissions.rfa_moderator" title="RFA Moderator">RMo</span>
+                    <span ng-repeat="(pname, value) in user.permissions" ng-if="value">
+                        <span class="label label-default" title="{{pname | perms_disp: 'full'}}"  ng-if="value">{{ pname | perms_disp: 'abbr' }}</span>
+                    </span>
                 </td>
             </tr>
         </tbody>
