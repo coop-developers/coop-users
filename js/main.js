@@ -115,6 +115,7 @@ user_management_system.controller('LoginCtrl', ['$scope', 'capi.ums', '$location
                 $scope.busy = false;
             });
         }
+        $('#login-username').focus().select();
     }]
 );
 
