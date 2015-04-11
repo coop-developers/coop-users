@@ -44,12 +44,14 @@
             <li class="active"><a href="#/profile">Profile</a></li>
             <li ng-if="ums.current_user"><a href="../coop-rfa">RFA System</a></li>
           </ul>
-          <ul class="nav navbar-nav navbar-right">
-              <li class="navbar-text" ng-if="ums.current_user">
-                Welcome, <span ng-bind="ums.current_user.full_name"></span>
-              </li>
-              <li ng-if="ums.current_user"><a href="javascript:void(0)" ng-click="logout()">Logout</a></li>
-              <li ng-if="!ums.current_user"><a href="#/login">Login</a></li>
+          <div class="navbar-right">
+              <p class="navbar-text" ng-if="ums.current_user">
+                  Welcome, <span ng-bind="ums.current_user.full_name"></span>
+              </p>
+              <ul class="nav navbar-nav">
+                  <li ng-if="ums.current_user"><a href="javascript:void(0)" ng-click="logout()">Logout</a></li>
+                  <li ng-if="!ums.current_user"><a href="#/login">Login</a></li>
+              </ul>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
